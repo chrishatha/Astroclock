@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -19,6 +20,7 @@ import { useClockContext } from '@/context/ClockContext';
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { location, usingGPS, setLocation, setUsingGPS, refreshGPS } = useClockContext();
 
   const [latInput, setLatInput] = useState(String(location.latitude));
@@ -175,12 +177,24 @@ export default function SettingsScreen() {
           <Text style={styles.info}>
             {'Layer 1 – Fixed degree ring (30 fields × 12°, south = 0°)\n' +
              'Layer 2 – 24-hour wheel (current hour at south)\n' +
-             'Layer 3 – Zodiac ring (rotates monthly)\n' +
+             'Layer 3 – Zodiac ring (rotates with Earth, radiance at noon)\n' +
              'Layer 4 – Sun hand (1°/day from spring equinox)\n' +
              'Layer 5 – Moon hand (synodic cycle pattern)\n' +
              'Layer 6 – Lunar phase cross (aligned to month phases)'}
           </Text>
         </View>
+
+        {/* Contact */}
+        <TouchableOpacity
+          style={styles.contactBtn}
+          onPress={() => router.push('/contact')}
+        >
+          <Feather name="mail" size={18} color="#06080f" />
+          <Text style={styles.contactBtnText}>Contact the Developer</Text>
+        </TouchableOpacity>
+
+        {/* Copyright */}
+        <Text style={styles.copyright}>© 2026 Christian Szeßny</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -316,5 +330,27 @@ const styles = StyleSheet.create({
     color: '#5a6a7a',
     fontFamily: 'Inter_400Regular',
     lineHeight: 22,
+  },
+  contactBtn: {
+    backgroundColor: '#c9a227',
+    borderRadius: 12,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  contactBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#06080f',
+    fontFamily: 'Inter_700Bold',
+  },
+  copyright: {
+    fontSize: 12,
+    color: '#3a4a5a',
+    fontFamily: 'Inter_400Regular',
+    textAlign: 'center',
+    paddingBottom: 4,
   },
 });

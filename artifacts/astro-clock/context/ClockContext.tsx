@@ -128,7 +128,13 @@ export function ClockProvider({ children }: { children: React.ReactNode }) {
   const solarNoonHour = solarNoon.getHours() + solarNoon.getMinutes() / 60;
 
   const layer2RotationDeg = computeLayer2Rotation(now, solarNoon);
-  const layer3RotationDeg = getZodiacRotation(now);
+
+  // Zodiac daily rotation: at solar noon the radiance sign is at south (base rotation).
+  // Earth rotates 15°/hour, so the zodiac also shifts 15° clockwise per hour from noon.
+  const baseZodiacRotation = getZodiacRotation(now);
+  const currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const hoursFromNoon = currentHour - solarNoonHour;
+  const layer3RotationDeg = ((baseZodiacRotation + hoursFromNoon * 15) % 360 + 360) % 360;
   const sunAngleDeg = getSunAngle(now);
   const moonHandAngleDeg = getMoonHandAngle(now);
   const crossRotationDeg = getCrossRotation(now.getFullYear(), now.getMonth());

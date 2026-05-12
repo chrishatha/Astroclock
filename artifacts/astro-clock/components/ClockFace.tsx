@@ -480,6 +480,16 @@ export default function ClockFace({
       {/* Center jewel */}
       <Circle cx={CX} cy={CY} r={CENTER_R} fill="#0f1a28" stroke="#c9a227" strokeWidth={2} />
       <Circle cx={CX} cy={CY} r={CENTER_R * 0.5} fill="#c9a227" opacity={0.7} />
+
+      {/* Copyright */}
+      <SvgText
+        x={CX} y={980}
+        textAnchor="middle" dominantBaseline="auto"
+        fontSize={20} fill="#2a3a4a"
+        fontStyle="italic"
+      >
+        © 2026 Christian Szeßny
+      </SvgText>
     </Svg>
   );
 }

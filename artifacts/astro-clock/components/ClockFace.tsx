@@ -294,60 +294,110 @@ function Layer5Moon({ angleDeg }: { angleDeg: number }) {
 }
 
 // ─── Layer 6: Lunar phase cross ───────────────────────────────────────────────
-function Layer6Cross({ rotationDeg }: { rotationDeg: number }) {
-  const phasePositions = [
-    { arm: 0,   label: 'full',    fillA: 'white',   fillB: 'white'   },
-    { arm: 90,  label: 'first-q', fillA: 'white',   fillB: '#060c14' },
-    { arm: 180, label: 'new',     fillA: '#060c14', fillB: '#060c14' },
-    { arm: 270, label: 'last-q',  fillA: '#060c14', fillB: 'white'   },
+//
+//  Arm layout (clockwise from full-moon arm at 0°):
+//    0°  = full moon      (white circle)
+//   90°  = last quarter   (left half bright / right half dark)
+//  180°  = new moon       (black circle)
+//  270°  = first quarter  (left half dark / right half bright)
+//
+//  The whole cross rotates so arm 0° aligns with the full-moon day-field.
+//  Each 90° ≈ 7.4 days × 12°/day → the other arms land on the correct dates.
+
+interface PhaseArm {
+  arm: number;
+  label: string;
+  dayNum: number | null;
+}
+
+function HalfMoon({
+  cx, cy, r, leftFill, rightFill,
+}: { cx: number; cy: number; r: number; leftFill: string; rightFill: string }) {
+  const topY = cy - r, botY = cy + r;
+  const leftPath  = `M ${cx} ${topY} A ${r} ${r} 0 0 0 ${cx} ${botY} Z`;
+  const rightPath = `M ${cx} ${topY} A ${r} ${r} 0 0 1 ${cx} ${botY} Z`;
+  return (
+    <G>
+      <Path d={leftPath}  fill={leftFill} />
+      <Path d={rightPath} fill={rightFill} />
+      <Circle cx={cx} cy={cy} r={r} fill="none" stroke="#7788aa" strokeWidth={1.5} />
+    </G>
+  );
+}
+
+function Layer6Cross({
+  rotationDeg, fullMoonDay, firstQuarterDay, newMoonDay, lastQuarterDay,
+}: {
+  rotationDeg: number;
+  fullMoonDay: number | null;
+  firstQuarterDay: number | null;
+  newMoonDay: number | null;
+  lastQuarterDay: number | null;
+}) {
+  const arms: PhaseArm[] = [
+    { arm: 0,   label: 'full',    dayNum: fullMoonDay    },
+    { arm: 90,  label: 'last-q',  dayNum: lastQuarterDay },
+    { arm: 180, label: 'new',     dayNum: newMoonDay     },
+    { arm: 270, label: 'first-q', dayNum: firstQuarterDay },
   ];
+
+  const r = PHASE_R;
 
   return (
     <G transform={`rotate(${rotationDeg}, ${CX}, ${CY})`}>
       {/* Cross arms */}
-      {[0, 90, 180, 270].map(arm => {
+      {arms.map(({ arm }) => {
         const tip = P(CROSS_TIP, arm);
         return (
           <Line key={arm}
             x1={CX} y1={CY} x2={tip.x} y2={tip.y}
-            stroke="#334455" strokeWidth={1.2}
+            stroke="#2a3d55" strokeWidth={1.5}
           />
         );
       })}
 
-      {/* Phase circles */}
-      {phasePositions.map(({ arm, label, fillA, fillB }) => {
+      {/* Phase circles + day labels */}
+      {arms.map(({ arm, label, dayNum }) => {
         const tip = P(CROSS_TIP, arm);
         const cx = tip.x, cy = tip.y;
-        const r = PHASE_R;
-        const idL = `lhalf-${arm}`;
-        const idR = `rhalf-${arm}`;
 
+        let moon: React.ReactNode;
         if (label === 'full') {
-          return (
-            <G key={arm}>
-              <Circle cx={cx} cy={cy} r={r} fill="white" stroke="#aaaaaa" strokeWidth={1.5} />
-            </G>
-          );
+          moon = <Circle cx={cx} cy={cy} r={r} fill="#e8dfc8" stroke="#aaaaaa" strokeWidth={1.5} />;
+        } else if (label === 'new') {
+          moon = <Circle cx={cx} cy={cy} r={r} fill="#060c14" stroke="#445566" strokeWidth={1.5} />;
+        } else if (label === 'last-q') {
+          // Last quarter: left half bright (waning, lit on east/left side)
+          moon = <HalfMoon cx={cx} cy={cy} r={r} leftFill="#e8dfc8" rightFill="#060c14" />;
+        } else {
+          // First quarter: right half bright (waxing, lit on west/right side)
+          moon = <HalfMoon cx={cx} cy={cy} r={r} leftFill="#060c14" rightFill="#e8dfc8" />;
         }
-        if (label === 'new') {
-          return (
-            <G key={arm}>
-              <Circle cx={cx} cy={cy} r={r} fill="#060c14" stroke="#555566" strokeWidth={1.5} />
-            </G>
-          );
-        }
-        // Half moons — use Path for left/right halves
-        const topY = cy - r, botY = cy + r;
-        // left semicircle path (from top, going left arc to bottom)
-        const leftPath  = `M ${cx} ${topY} A ${r} ${r} 0 0 0 ${cx} ${botY} Z`;
-        // right semicircle path
-        const rightPath = `M ${cx} ${topY} A ${r} ${r} 0 0 1 ${cx} ${botY} Z`;
+
+        // Day number label — placed between circle and ring inner edge, rotated
+        // so it reads tangentially (text points toward the arm direction).
+        // We counter-rotate the text by -rotationDeg via the parent G so it
+        // stays legible, then rotate again by arm to position.
+        const labelR = CROSS_TIP + r + 18;
+        const labelPos = P(labelR, arm);
+
         return (
           <G key={arm}>
-            <Circle cx={cx} cy={cy} r={r} fill="none" stroke="#888899" strokeWidth={1.5} />
-            <Path d={leftPath}  fill={fillA} />
-            <Path d={rightPath} fill={fillB} />
+            {moon}
+            {dayNum != null && (
+              <G transform={`rotate(${arm}, ${CX}, ${CY})`}>
+                <SvgText
+                  x={CX} y={CY - labelR}
+                  textAnchor="middle" dominantBaseline="middle"
+                  fontSize={20} fill="#8899bb" fontWeight="600"
+                  transform={(arm > 90 && arm < 270)
+                    ? `rotate(180, ${CX}, ${CY - labelR})`
+                    : undefined}
+                >
+                  {String(dayNum)}
+                </SvgText>
+              </G>
+            )}
           </G>
         );
       })}
@@ -365,6 +415,10 @@ interface Props {
   crossRotationDeg: number;
   zodiacCurrentIndex: number;
   zodiacPrevIndex: number;
+  fullMoonDay: number | null;
+  firstQuarterDay: number | null;
+  newMoonDay: number | null;
+  lastQuarterDay: number | null;
 }
 
 export default function ClockFace({
@@ -376,6 +430,10 @@ export default function ClockFace({
   crossRotationDeg,
   zodiacCurrentIndex,
   zodiacPrevIndex,
+  fullMoonDay,
+  firstQuarterDay,
+  newMoonDay,
+  lastQuarterDay,
 }: Props) {
   return (
     <Svg width={size} height={size} viewBox="0 0 1000 1000">
@@ -405,7 +463,13 @@ export default function ClockFace({
       <Circle cx={CX} cy={CY} r={L3_INNER - 1} fill="#06080f" />
 
       {/* Layer 6 – cross (under hands) */}
-      <Layer6Cross rotationDeg={crossRotationDeg} />
+      <Layer6Cross
+        rotationDeg={crossRotationDeg}
+        fullMoonDay={fullMoonDay}
+        firstQuarterDay={firstQuarterDay}
+        newMoonDay={newMoonDay}
+        lastQuarterDay={lastQuarterDay}
+      />
 
       {/* Layer 4 – sun hand */}
       <Layer4Sun angleDeg={sunAngleDeg} />

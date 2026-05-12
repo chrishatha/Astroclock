@@ -6,6 +6,7 @@ import {
   calculateSolarNoon,
   getCrossRotation,
   getMoonHandAngle,
+  getMoonPhaseDays,
   getSunAngle,
   getZodiacIndex,
   getZodiacRotation,
@@ -22,7 +23,7 @@ export interface ClockValues {
   location: Location;
   usingGPS: boolean;
   solarNoon: Date | null;
-  solarNoonHour: number; // local decimal hour
+  solarNoonHour: number;
   layer2RotationDeg: number;
   layer3RotationDeg: number;
   sunAngleDeg: number;
@@ -30,6 +31,10 @@ export interface ClockValues {
   crossRotationDeg: number;
   zodiacCurrentIndex: number;
   zodiacPrevIndex: number;
+  fullMoonDay: number | null;
+  firstQuarterDay: number | null;
+  newMoonDay: number | null;
+  lastQuarterDay: number | null;
   setLocation: (loc: Location) => void;
   setUsingGPS: (v: boolean) => void;
   refreshGPS: () => void;
@@ -130,11 +135,19 @@ export function ClockProvider({ children }: { children: React.ReactNode }) {
   const zodiacCurrentIndex = getZodiacIndex(now);
   const zodiacPrevIndex = (zodiacCurrentIndex - 1 + 12) % 12;
 
+  const {
+    fullMoon: fullMoonDay,
+    firstQuarter: firstQuarterDay,
+    newMoon: newMoonDay,
+    lastQuarter: lastQuarterDay,
+  } = getMoonPhaseDays(now.getFullYear(), now.getMonth());
+
   return (
     <ClockContext.Provider value={{
       now, location, usingGPS, solarNoon, solarNoonHour,
       layer2RotationDeg, layer3RotationDeg, sunAngleDeg,
       moonHandAngleDeg, crossRotationDeg, zodiacCurrentIndex, zodiacPrevIndex,
+      fullMoonDay, firstQuarterDay, newMoonDay, lastQuarterDay,
       setLocation, setUsingGPS, refreshGPS,
     }}>
       {children}

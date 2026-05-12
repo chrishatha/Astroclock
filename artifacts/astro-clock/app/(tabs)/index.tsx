@@ -24,6 +24,7 @@ export default function ClockScreen() {
     layer2RotationDeg, layer3RotationDeg,
     sunAngleDeg, moonHandAngleDeg, crossRotationDeg,
     zodiacCurrentIndex, zodiacPrevIndex,
+    fullMoonDay, firstQuarterDay, newMoonDay, lastQuarterDay,
   } = useClockContext();
 
   const { width } = Dimensions.get('window');
@@ -62,6 +63,10 @@ export default function ClockScreen() {
           crossRotationDeg={crossRotationDeg}
           zodiacCurrentIndex={zodiacCurrentIndex}
           zodiacPrevIndex={zodiacPrevIndex}
+          fullMoonDay={fullMoonDay}
+          firstQuarterDay={firstQuarterDay}
+          newMoonDay={newMoonDay}
+          lastQuarterDay={lastQuarterDay}
         />
       </View>
 

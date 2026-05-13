@@ -94,28 +94,39 @@ export function getMoonPhaseDays(year: number, month: number): {
     inMonth(d) ? Math.max(1, Math.min(31, d.getUTCDate())) : null;
 
   // Search for the lunation whose FULL moon (new + 14.77 d) is in this month
-  let newMoonDate: Date | null = null;
+  let baseNewMoon: Date | null = null;
   for (let offset = -2; offset <= 3; offset++) {
     const lunation = Math.floor(approxLunation) + offset;
     const nm = nmAt(lunation);
     const fm = new Date(nm.getTime() + 14.77 * 86400000);
     if (inMonth(fm)) {
-      newMoonDate = nm;
+      baseNewMoon = nm;
       break;
     }
   }
 
   // Fallback — no full moon in this month (very rare, e.g. short February)
-  if (!newMoonDate) {
-    newMoonDate = nmAt(Math.round(approxLunation));
+  if (!baseNewMoon) {
+    baseNewMoon = nmAt(Math.round(approxLunation));
   }
 
-  const fmDate = new Date(newMoonDate.getTime() + 14.77  * 86400000);
-  const fqDate = new Date(newMoonDate.getTime() +  7.38  * 86400000);
-  const lqDate = new Date(fmDate.getTime()     +  7.38  * 86400000);
+  const fmDate = new Date(baseNewMoon.getTime() + 14.77 * 86400000);
+  const fqDate = new Date(baseNewMoon.getTime() +  7.38 * 86400000);
+  const lqDate = new Date(fmDate.getTime()      +  7.38 * 86400000);
+
+  // Independently find a new moon that itself falls within this month
+  let newMoonInMonth: Date | null = null;
+  for (let offset = -2; offset <= 3; offset++) {
+    const lunation = Math.floor(approxLunation) + offset;
+    const nm = nmAt(lunation);
+    if (inMonth(nm)) {
+      newMoonInMonth = nm;
+      break;
+    }
+  }
 
   return {
-    newMoon:      utcDay(newMoonDate),
+    newMoon:      utcDay(newMoonInMonth),
     firstQuarter: utcDay(fqDate),
     fullMoon:     utcDay(fmDate),
     lastQuarter:  utcDay(lqDate),

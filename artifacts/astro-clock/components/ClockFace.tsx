@@ -100,7 +100,7 @@ function Layer1Fixed() {
 
       {/* Compass letters */}
       <SvgText x={CX} y={CY - 462} textAnchor="middle" dominantBaseline="auto" fontSize={40} fill="#c9a227" fontWeight="700">S</SvgText>
-      <SvgText x={CX} y={CY + 500} textAnchor="middle" dominantBaseline="hanging" fontSize={40} fill="#c9a227" fontWeight="700">N</SvgText>
+      <SvgText x={CX} y={CY + 494} textAnchor="middle" dominantBaseline="auto" fontSize={40} fill="#c9a227" fontWeight="700">N</SvgText>
       <SvgText x={CX - 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={40} fill="#c9a227" fontWeight="700">E</SvgText>
       <SvgText x={CX + 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={40} fill="#c9a227" fontWeight="700">W</SvgText>
 
@@ -435,8 +435,8 @@ export default function ClockFace({
   newMoonDay,
   lastQuarterDay,
 }: Props) {
-  // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg, just inside the L1 inner edge
-  const ARC_R = L1_INNER - 14; // between inner edge and L2 outer — clear of all labels
+  // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg, inside the degree ring near its inner edge
+  const ARC_R = L1_INNER + 14; // inside the L1 degree ring, just above L1_INNER — visible and clear of labels
   const sunArcPath = useMemo(() => {
     const r = ARC_R;
     const startDeg = 1;

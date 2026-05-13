@@ -114,15 +114,6 @@ export default function ClockScreen() {
                 : '--'}
             </Text>
           </View>
-          <View style={styles.infoDivider} />
-          <View style={styles.infoItem}>
-            <Text style={styles.infoLabel}>🌗 Last Quarter</Text>
-            <Text style={styles.infoValue}>
-              {lastQuarterDay != null
-                ? `${String(lastQuarterDay).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.`
-                : '--'}
-            </Text>
-          </View>
         </View>
       </View>
     </View>
@@ -193,10 +184,10 @@ const styles = StyleSheet.create({
   },
   infoBar: {
     backgroundColor: '#0a1220',
-    borderRadius: 14,
+    borderRadius: 12,
     marginHorizontal: 16,
-    marginBottom: 8,
-    paddingVertical: 10,
+    marginBottom: 6,
+    paddingVertical: 6,
     paddingHorizontal: 4,
     borderWidth: 1,
     borderColor: '#1e2d42',
@@ -207,7 +198,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingVertical: 4,
+    paddingVertical: 3,
   },
   infoSep: {
     height: 1,
@@ -217,23 +208,23 @@ const styles = StyleSheet.create({
   infoItem: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 1,
   },
   infoLabel: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#5a6a7a',
     fontFamily: 'Inter_500Medium',
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.5,
   },
   infoValue: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#c9a227',
     fontFamily: 'Inter_600SemiBold',
   },
   infoDivider: {
     width: 1,
-    height: 28,
+    height: 24,
     backgroundColor: '#1e2d42',
   },
 });

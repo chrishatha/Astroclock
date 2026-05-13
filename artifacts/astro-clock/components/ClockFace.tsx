@@ -435,6 +435,18 @@ export default function ClockFace({
   newMoonDay,
   lastQuarterDay,
 }: Props) {
+  // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg on the L1 ring midpoint
+  const sunArcPath = useMemo(() => {
+    const r = L1_MID;
+    const startDeg = 1;
+    const endDeg   = sunAngleDeg <= 1 ? 1.01 : sunAngleDeg;
+    const span     = ((endDeg - startDeg) % 360 + 360) % 360;
+    const s = P(r, startDeg);
+    const e = P(r, endDeg);
+    const lg = span > 180 ? 1 : 0;
+    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${lg} 1 ${e.x} ${e.y}`;
+  }, [sunAngleDeg]);
+
   return (
     <Svg width={size} height={size} viewBox="0 0 1000 1000">
       {/* Background */}
@@ -443,14 +455,26 @@ export default function ClockFace({
       {/* Layer 1 – fixed ring */}
       <Layer1Fixed />
 
+      {/* Sun journey arc — March 21 (1°) to today, on L1 ring midpoint */}
+      <Path
+        d={sunArcPath}
+        fill="none"
+        stroke="#f5c518"
+        strokeWidth={7}
+        opacity={0.38}
+        strokeLinecap="round"
+      />
+      {/* Start marker at March 21 */}
+      <Circle cx={P(L1_MID, 1).x} cy={P(L1_MID, 1).y} r={5} fill="#f5c518" opacity={0.6} />
+
       {/* Inner disc background */}
       <Circle cx={CX} cy={CY} r={L1_INNER - 1} fill="#06080f" />
 
       {/* Layer 2 – 24h rotating */}
       <Layer2Hours rotationDeg={layer2RotationDeg} />
 
-      {/* South marker on 24h ring — fixed, matches digital clock colour */}
-      <Circle cx={CX} cy={CY - L2_MID} r={7} fill="#e8d5a3" />
+      {/* South marker on 24h ring — fixed dot at outer edge, matches digital clock colour */}
+      <Circle cx={CX} cy={CY - L2_OUTER} r={4} fill="#e8d5a3" />
 
       {/* Inner disc */}
       <Circle cx={CX} cy={CY} r={L2_INNER - 1} fill="#06080f" />

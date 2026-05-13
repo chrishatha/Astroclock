@@ -46,25 +46,21 @@ export function getLunarPhase(date: Date): number {
 }
 
 /**
- * Moon hand — snaps to one of five discrete fields every ~5.9 days.
- * Sequence: 6 → 18 → 30 → 12 → 24 → 6 …  (pentagram pattern, 144° per step)
+ * Moon hand — snaps to one of five discrete field-centres every day.
+ * The cycle restarts every 5 days from March 21 (day 1).
  *
- * Mapping to phase (0=new moon):
- *   segment 0  (0.00–0.20)  field  6  (new moon area)
- *   segment 1  (0.20–0.40)  field 18  (waxing crescent/first quarter)
- *   segment 2  (0.40–0.60)  field 30  (full moon area)
- *   segment 3  (0.60–0.80)  field 12  (waning/last quarter)
- *   segment 4  (0.80–1.00)  field 24  (approaching new moon)
+ * Day 1 (Mar 21) → field  6 →  66°
+ * Day 2          → field 18 → 210°
+ * Day 3          → field 30 → 354°
+ * Day 4          → field 12 → 138°
+ * Day 5          → field 24 → 282°
+ * Day 6          → field  6 →  66°  (repeats)
  */
 export function getMoonHandAngle(date: Date): number {
-  const FIELDS = [6, 18, 30, 12, 24];
-  // Advance by 1 day to align with the clock year starting March 21 = day 1
-  const shifted = new Date(date.getTime() + 86400000);
-  const phase   = getLunarPhase(shifted);
-  const idx     = Math.floor(phase * 5) % 5;
-  const field   = FIELDS[idx];
-  // Centre of field N is at (N-1)*12 + 6 degrees clockwise from south
-  return (field - 1) * 12 + 6;
+  const POSITIONS = [66, 210, 354, 138, 282]; // field-centre degrees (clockwise from south)
+  const dayCount  = getDaysSinceMar21(date) + 1; // March 21 = day 1
+  const idx       = (dayCount - 1) % 5;
+  return POSITIONS[idx];
 }
 
 /**

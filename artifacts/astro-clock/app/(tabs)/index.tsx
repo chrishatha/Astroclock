@@ -72,21 +72,52 @@ export default function ClockScreen() {
 
       {/* Info bar */}
       <View style={styles.infoBar}>
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>Solar Noon</Text>
-          <Text style={styles.infoValue}>{formatSolarNoon(solarNoon)}</Text>
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Solar Noon</Text>
+            <Text style={styles.infoValue}>{formatSolarNoon(solarNoon)}</Text>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Location</Text>
+            <Text style={styles.infoValue}>{location.name}</Text>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Lat / Lon</Text>
+            <Text style={styles.infoValue}>
+              {location.latitude.toFixed(2)}° / {location.longitude.toFixed(2)}°
+            </Text>
+          </View>
         </View>
-        <View style={styles.infoDivider} />
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>Location</Text>
-          <Text style={styles.infoValue}>{location.name}</Text>
-        </View>
-        <View style={styles.infoDivider} />
-        <View style={styles.infoItem}>
-          <Text style={styles.infoLabel}>Lat / Lon</Text>
-          <Text style={styles.infoValue}>
-            {location.latitude.toFixed(2)}° / {location.longitude.toFixed(2)}°
-          </Text>
+        <View style={styles.infoSep} />
+        <View style={styles.infoRow}>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>🌕 Full Moon</Text>
+            <Text style={styles.infoValue}>
+              {fullMoonDay != null
+                ? `${String(fullMoonDay).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.`
+                : '--'}
+            </Text>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>🌑 New Moon</Text>
+            <Text style={styles.infoValue}>
+              {newMoonDay != null
+                ? `${String(newMoonDay).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.`
+                : '--'}
+            </Text>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>🌗 Last Quarter</Text>
+            <Text style={styles.infoValue}>
+              {lastQuarterDay != null
+                ? `${String(lastQuarterDay).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.`
+                : '--'}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -137,39 +168,48 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   infoBar: {
-    flexDirection: 'row',
     backgroundColor: '#0a1220',
     borderRadius: 14,
     marginHorizontal: 16,
     marginBottom: 8,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 4,
     borderWidth: 1,
     borderColor: '#1e2d42',
     width: '92%',
+    gap: 0,
+  },
+  infoRow: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+    paddingVertical: 4,
+  },
+  infoSep: {
+    height: 1,
+    backgroundColor: '#1e2d42',
+    marginHorizontal: 12,
   },
   infoItem: {
     flex: 1,
     alignItems: 'center',
-    gap: 3,
+    gap: 2,
   },
   infoLabel: {
-    fontSize: 10,
+    fontSize: 9,
     color: '#5a6a7a',
     fontFamily: 'Inter_500Medium',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 0.6,
   },
   infoValue: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#c9a227',
     fontFamily: 'Inter_600SemiBold',
   },
   infoDivider: {
     width: 1,
-    height: 32,
+    height: 28,
     backgroundColor: '#1e2d42',
   },
 });

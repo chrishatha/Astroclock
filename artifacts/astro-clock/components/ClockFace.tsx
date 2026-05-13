@@ -99,10 +99,10 @@ function Layer1Fixed() {
       />
 
       {/* Compass letters */}
-      <SvgText x={CX} y={CY - 462} textAnchor="middle" dominantBaseline="auto" fontSize={58} fill="#c9a227" fontWeight="700">S</SvgText>
-      <SvgText x={CX} y={CY + 500} textAnchor="middle" dominantBaseline="hanging" fontSize={58} fill="#c9a227" fontWeight="700">N</SvgText>
-      <SvgText x={CX - 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={58} fill="#c9a227" fontWeight="700">E</SvgText>
-      <SvgText x={CX + 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={58} fill="#c9a227" fontWeight="700">W</SvgText>
+      <SvgText x={CX} y={CY - 462} textAnchor="middle" dominantBaseline="auto" fontSize={40} fill="#c9a227" fontWeight="700">S</SvgText>
+      <SvgText x={CX} y={CY + 500} textAnchor="middle" dominantBaseline="hanging" fontSize={40} fill="#c9a227" fontWeight="700">N</SvgText>
+      <SvgText x={CX - 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={40} fill="#c9a227" fontWeight="700">E</SvgText>
+      <SvgText x={CX + 462} y={CY} textAnchor="middle" dominantBaseline="middle" fontSize={40} fill="#c9a227" fontWeight="700">W</SvgText>
 
       {/* Ring background */}
       <Path d={arc(L1_OUTER, L1_INNER, 0, 359.99)} fill="#0f1520" />
@@ -225,12 +225,12 @@ function Layer3Zodiac({
 
         return (
           <G key={i}>
-            {/* Sign name */}
-            <TangentialText angleDeg={deg} r={L3_MID + 14} fontSize={19} fill={isCurrentSign ? '#555566' : isPrevSign ? '#cc3333' : color}>
+            {/* Sign name — always use element color */}
+            <TangentialText angleDeg={deg} r={L3_MID + 14} fontSize={19} fill={color}>
               {sign.abbr}
             </TangentialText>
-            {/* Dates */}
-            <TangentialText angleDeg={deg} r={L3_MID - 10} fontSize={13} fill={isCurrentSign ? '#444455' : isPrevSign ? '#993333' : color} dy={6}>
+            {/* Dates — always use element color */}
+            <TangentialText angleDeg={deg} r={L3_MID - 10} fontSize={13} fill={color} dy={6}>
               {sign.dates}
             </TangentialText>
             {/* Special labels */}
@@ -449,6 +449,9 @@ export default function ClockFace({
       {/* Layer 2 – 24h rotating */}
       <Layer2Hours rotationDeg={layer2RotationDeg} />
 
+      {/* South marker on 24h ring — fixed, matches digital clock colour */}
+      <Circle cx={CX} cy={CY - L2_MID} r={7} fill="#e8d5a3" />
+
       {/* Inner disc */}
       <Circle cx={CX} cy={CY} r={L2_INNER - 1} fill="#06080f" />
 
@@ -481,10 +484,10 @@ export default function ClockFace({
       <Circle cx={CX} cy={CY} r={CENTER_R} fill="#0f1a28" stroke="#c9a227" strokeWidth={2} />
       <Circle cx={CX} cy={CY} r={CENTER_R * 0.5} fill="#c9a227" opacity={0.7} />
 
-      {/* Copyright */}
+      {/* Copyright — left side */}
       <SvgText
-        x={CX} y={980}
-        textAnchor="middle" dominantBaseline="auto"
+        x={30} y={980}
+        textAnchor="start" dominantBaseline="auto"
         fontSize={20} fill="#2a3a4a"
         fontStyle="italic"
       >

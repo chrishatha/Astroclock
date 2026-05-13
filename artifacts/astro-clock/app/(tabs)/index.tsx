@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   timeText: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: '600',
     color: '#e8d5a3',
     fontFamily: 'Inter_600SemiBold',

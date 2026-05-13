@@ -29,9 +29,9 @@ export function getDaysSinceMar21(date: Date): number {
   return days;
 }
 
-/** Sun hand angle — 0° on March 21, +1°/day clockwise */
+/** Sun hand angle — March 21 = day 1 = 1°, +1°/day clockwise */
 export function getSunAngle(date: Date): number {
-  return getDaysSinceMar21(date) % 360;
+  return (getDaysSinceMar21(date) + 1) % 360;
 }
 
 // ─── Lunar core ───────────────────────────────────────────────────────────────
@@ -58,9 +58,11 @@ export function getLunarPhase(date: Date): number {
  */
 export function getMoonHandAngle(date: Date): number {
   const FIELDS = [6, 18, 30, 12, 24];
-  const phase  = getLunarPhase(date);
-  const idx    = Math.floor(phase * 5) % 5;
-  const field  = FIELDS[idx];
+  // Advance by 1 day to align with the clock year starting March 21 = day 1
+  const shifted = new Date(date.getTime() + 86400000);
+  const phase   = getLunarPhase(shifted);
+  const idx     = Math.floor(phase * 5) % 5;
+  const field   = FIELDS[idx];
   // Centre of field N is at (N-1)*12 + 6 degrees clockwise from south
   return (field - 1) * 12 + 6;
 }

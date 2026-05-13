@@ -435,9 +435,10 @@ export default function ClockFace({
   newMoonDay,
   lastQuarterDay,
 }: Props) {
-  // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg on the L1 ring midpoint
+  // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg, just inside the L1 inner edge
+  const ARC_R = L1_INNER - 14; // between inner edge and L2 outer — clear of all labels
   const sunArcPath = useMemo(() => {
-    const r = L1_MID;
+    const r = ARC_R;
     const startDeg = 1;
     const endDeg   = sunAngleDeg <= 1 ? 1.01 : sunAngleDeg;
     const span     = ((endDeg - startDeg) % 360 + 360) % 360;
@@ -455,17 +456,17 @@ export default function ClockFace({
       {/* Layer 1 – fixed ring */}
       <Layer1Fixed />
 
-      {/* Sun journey arc — March 21 (1°) to today, on L1 ring midpoint */}
+      {/* Sun journey arc — March 21 (1°) to today, just inside the degree ring */}
       <Path
         d={sunArcPath}
         fill="none"
         stroke="#f5c518"
-        strokeWidth={7}
-        opacity={0.38}
+        strokeWidth={6}
+        opacity={0.45}
         strokeLinecap="round"
       />
       {/* Start marker at March 21 */}
-      <Circle cx={P(L1_MID, 1).x} cy={P(L1_MID, 1).y} r={5} fill="#f5c518" opacity={0.6} />
+      <Circle cx={P(ARC_R, 1).x} cy={P(ARC_R, 1).y} r={4} fill="#f5c518" opacity={0.65} />
 
       {/* Inner disc background */}
       <Circle cx={CX} cy={CY} r={L1_INNER - 1} fill="#06080f" />

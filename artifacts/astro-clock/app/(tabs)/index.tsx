@@ -39,9 +39,14 @@ export default function ClockScreen() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.timeText}>{formatTime(now)}</Text>
-          <Text style={styles.dateText}>
-            {now.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' })}
-          </Text>
+          <View style={styles.dateRow}>
+            <Text style={styles.dateText}>
+              {now.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' })}
+            </Text>
+            <View style={styles.sunDayBadge}>
+              <Text style={styles.sunDayText}>☀ {Math.round(sunAngleDeg)}</Text>
+            </View>
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => router.push('/(tabs)/settings')}
@@ -141,6 +146,25 @@ const styles = StyleSheet.create({
   },
   headerLeft: {
     gap: 2,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sunDayBadge: {
+    backgroundColor: '#1a1400',
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: '#4a3a00',
+  },
+  sunDayText: {
+    fontSize: 11,
+    color: '#c9a227',
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.5,
   },
   timeText: {
     fontSize: 20,

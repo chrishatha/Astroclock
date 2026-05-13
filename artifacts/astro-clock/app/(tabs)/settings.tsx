@@ -22,7 +22,6 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { location, usingGPS, setLocation, setUsingGPS, refreshGPS } = useClockContext();
-
   const [latInput, setLatInput] = useState(String(location.latitude));
   const [lngInput, setLngInput] = useState(String(location.longitude));
   const [nameInput, setNameInput] = useState(location.name);
@@ -75,12 +74,24 @@ export default function SettingsScreen() {
       style={{ flex: 1, backgroundColor: '#06080f' }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      {/* Fixed back header */}
+      <View style={[styles.backHeader, { paddingTop: topPad + 8 }]}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => router.replace('/(tabs)')}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        >
+          <Feather name="chevron-left" size={22} color="#c9a227" />
+          <Text style={styles.backBtnText}>Clock</Text>
+        </TouchableOpacity>
+        <Text style={styles.heading}>Settings</Text>
+      </View>
+
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={[styles.content, { paddingTop: topPad + 16, paddingBottom: botPad + 20 }]}
+        contentContainerStyle={[styles.content, { paddingTop: 12, paddingBottom: botPad + 20 }]}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.heading}>Settings</Text>
         <Text style={styles.subheading}>Location for solar noon calculation</Text>
 
         {/* GPS Toggle */}
@@ -205,8 +216,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 16,
   },
+  backHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1e2d42',
+    gap: 12,
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  backBtnText: {
+    fontSize: 15,
+    color: '#c9a227',
+    fontFamily: 'Inter_500Medium',
+  },
   heading: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '700',
     color: '#e8d5a3',
     fontFamily: 'Inter_700Bold',
@@ -215,7 +245,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#5a6a7a',
     fontFamily: 'Inter_400Regular',
-    marginTop: -10,
   },
   card: {
     backgroundColor: '#0a1220',

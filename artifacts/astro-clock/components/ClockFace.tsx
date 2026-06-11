@@ -208,11 +208,13 @@ const SEASON_MARKS = [
   { angle: 270, label: 'SS' },
 ] as const;
 
-// Draw a triangular arrow pointing radially outward (tip toward L3_OUTER) at a local angle
+// Draw a small triangular arrow pointing toward the zodiac ring inner edge (L3_INNER).
+// Arrow tip is just inside L3_INNER; base is further inward.
+// These must be rendered AFTER the inner-disc circle that covers r < L3_INNER.
 function zodiacArrowPath(signAngle: number): string {
-  const tipR   = L3_OUTER - 10;  // near outer edge
-  const baseR  = L3_MID   + 4;   // slightly above midpoint
-  const spread = 9;               // half-angular spread at base in degrees
+  const tipR   = L3_INNER - 4;   // just inside the zodiac ring inner edge (172)
+  const baseR  = L3_INNER - 20;  // further inward (156)
+  const spread = 4;               // small half-angular spread in degrees
   const tip = P(tipR, signAngle);
   const bl  = P(baseR, signAngle - spread);
   const br  = P(baseR, signAngle + spread);
@@ -282,9 +284,6 @@ function Layer3Zodiac({
         );
       })}
 
-      {/* Arrows: Empty Room (blue, gold outline) and Radiance (red, gold outline) */}
-      <Path d={zodiacArrowPath(emptyRoomDeg)} fill="#3355cc" stroke="#c9a227" strokeWidth={1.5} />
-      <Path d={zodiacArrowPath(radianceDeg)}  fill="#cc3333" stroke="#c9a227" strokeWidth={1.5} />
     </G>
   );
 }
@@ -526,6 +525,19 @@ export default function ClockFace({
 
       {/* Inner disc */}
       <Circle cx={CX} cy={CY} r={L3_INNER - 1} fill="#06080f" />
+
+      {/* Zodiac arrows — drawn AFTER inner disc so they appear on top.
+          Rotate with zodiac ring; tip sits just inside L3_INNER pointing outward. */}
+      {(() => {
+        const emptyDeg = ((-(zodiacCurrentIndex * 30 + 15)) % 360 + 360) % 360;
+        const radDeg   = ((-(zodiacPrevIndex    * 30 + 15)) % 360 + 360) % 360;
+        return (
+          <G transform={`rotate(${layer3RotationDeg}, ${CX}, ${CY})`}>
+            <Path d={zodiacArrowPath(emptyDeg)} fill="#3355cc" stroke="#c9a227" strokeWidth={1.2} />
+            <Path d={zodiacArrowPath(radDeg)}   fill="#cc3333" stroke="#c9a227" strokeWidth={1.2} />
+          </G>
+        );
+      })()}
 
       {/* Layer 6 – cross (under hands) */}
       <Layer6Cross

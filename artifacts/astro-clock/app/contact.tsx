@@ -1,142 +1,69 @@
+import * as Clipboard from 'expo-clipboard';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-function getApiBase(): string {
-  const domain = process.env.EXPO_PUBLIC_DOMAIN;
-  if (domain) return `https://${domain}`;
-  return 'http://localhost:5000';
-}
+const EMAIL = 'chris.hatha@proton.me';
 
 export default function ContactScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-
-  const [senderEmail, setSenderEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  async function handleSend() {
-    if (!senderEmail.trim() || !message.trim()) {
-      Alert.alert('Required', 'Please fill in both your email address and your message.');
-      return;
-    }
-    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailReg.test(senderEmail.trim())) {
-      Alert.alert('Invalid email', 'Please enter a valid email address.');
-      return;
-    }
-
-    setSending(true);
-    try {
-      const res = await fetch(`${getApiBase()}/api/contact`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ senderEmail: senderEmail.trim(), message: message.trim() }),
-      });
-      if (!res.ok) throw new Error('Server error');
-      setSent(true);
-    } catch {
-      Alert.alert('Error', 'Could not send your message. Please try again later.');
-    } finally {
-      setSending(false);
-    }
-  }
+  const [copied, setCopied] = useState(false);
 
   const topPad = Platform.OS === 'web' ? 67 : insets.top;
   const botPad = Platform.OS === 'web' ? 34 : insets.bottom;
 
+  async function handleCopy() {
+    await Clipboard.setStringAsync(EMAIL);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
-    <KeyboardAvoidingView
+    <ScrollView
       style={{ flex: 1, backgroundColor: '#06080f' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      contentContainerStyle={[styles.content, { paddingTop: topPad + 16, paddingBottom: botPad + 20 }]}
     >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={[styles.content, { paddingTop: topPad + 16, paddingBottom: botPad + 20 }]}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Header */}
-        <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Feather name="arrow-left" size={20} color="#c9a227" />
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <Feather name="arrow-left" size={20} color="#c9a227" />
+        </TouchableOpacity>
+        <Text style={styles.heading}>Contact</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.intro}>Get in touch with the developer of Astro-Clock-HaTha.</Text>
+
+        <View style={styles.emailRow}>
+          <Text style={styles.emailText}>{EMAIL}</Text>
+          <TouchableOpacity
+            style={[styles.copyBtn, copied && styles.copyBtnSuccess]}
+            onPress={handleCopy}
+            activeOpacity={0.8}
+          >
+            <Text style={[styles.copyBtnText, copied && styles.copyBtnTextSuccess]}>
+              {copied ? 'Copied! ✔' : 'Copy'}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.heading}>Contact</Text>
         </View>
 
-        {sent ? (
-          <View style={styles.successCard}>
-            <Feather name="check-circle" size={48} color="#c9a227" />
-            <Text style={styles.successTitle}>Message sent!</Text>
-            <Text style={styles.successText}>
-              Thank you for reaching out. Your message has been delivered.
-            </Text>
-            <TouchableOpacity style={styles.sendBtn} onPress={() => router.back()}>
-              <Text style={styles.sendBtnText}>Back</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.card}>
-            <Text style={styles.intro}>
-              Have a question or feedback about Astro Clock? Write a message below.
-            </Text>
+        <Text style={styles.keyword}>
+          Please use for request the keyword{'\n'}
+          <Text style={styles.keywordHighlight}>Astro-Clock-Hatha</Text>
+        </Text>
+      </View>
 
-            <Text style={styles.inputLabel}>Your email address</Text>
-            <TextInput
-              style={styles.input}
-              value={senderEmail}
-              onChangeText={setSenderEmail}
-              placeholder="you@example.com"
-              placeholderTextColor="#3a4a5a"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-            />
-
-            <Text style={styles.inputLabel}>Your message</Text>
-            <TextInput
-              style={[styles.input, styles.textarea]}
-              value={message}
-              onChangeText={setMessage}
-              placeholder="Write your message here…"
-              placeholderTextColor="#3a4a5a"
-              multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-            />
-
-            <TouchableOpacity
-              style={[styles.sendBtn, sending && styles.sendBtnDisabled]}
-              onPress={handleSend}
-              disabled={sending}
-            >
-              {sending ? (
-                <ActivityIndicator color="#06080f" size="small" />
-              ) : (
-                <Text style={styles.sendBtnText}>Send Message</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {/* Copyright */}
-        <Text style={styles.copyright}>© 2026 Christian Szeßny</Text>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      <Text style={styles.copyright}>© 2026 Christian Szeßny</Text>
+    </ScrollView>
   );
 }
 
@@ -166,78 +93,60 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#0a1220',
     borderRadius: 14,
-    padding: 18,
+    padding: 20,
     borderWidth: 1,
     borderColor: '#1e2d42',
-    gap: 12,
+    gap: 16,
   },
   intro: {
     fontSize: 14,
     color: '#7a8a9a',
     fontFamily: 'Inter_400Regular',
     lineHeight: 22,
-    marginBottom: 4,
   },
-  inputLabel: {
-    fontSize: 12,
-    color: '#5a6a7a',
-    fontFamily: 'Inter_500Medium',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: -4,
-  },
-  input: {
+  emailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#060c14',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#1e2d42',
-    color: '#e8d5a3',
-    fontSize: 16,
-    fontFamily: 'Inter_400Regular',
-    paddingVertical: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    gap: 10,
+  },
+  emailText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#c9a227',
+    fontFamily: 'Inter_500Medium',
+  },
+  copyBtn: {
+    backgroundColor: '#1e2d42',
+    borderRadius: 8,
+    paddingVertical: 8,
     paddingHorizontal: 14,
   },
-  textarea: {
-    minHeight: 130,
-    paddingTop: 12,
+  copyBtnSuccess: {
+    backgroundColor: '#1a5a2a',
   },
-  sendBtn: {
-    backgroundColor: '#c9a227',
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 6,
-  },
-  sendBtnDisabled: {
-    opacity: 0.6,
-  },
-  sendBtnText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#06080f',
-    fontFamily: 'Inter_700Bold',
-  },
-  successCard: {
-    backgroundColor: '#0a1220',
-    borderRadius: 14,
-    padding: 32,
-    borderWidth: 1,
-    borderColor: '#1e2d42',
-    alignItems: 'center',
-    gap: 16,
-  },
-  successTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+  copyBtnText: {
+    fontSize: 13,
     color: '#c9a227',
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_600SemiBold',
   },
-  successText: {
-    fontSize: 14,
-    color: '#7a8a9a',
+  copyBtnTextSuccess: {
+    color: '#55ee77',
+  },
+  keyword: {
+    fontSize: 13,
+    color: '#5a6a7a',
     fontFamily: 'Inter_400Regular',
-    textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 20,
+  },
+  keywordHighlight: {
+    color: '#c9a227',
+    fontFamily: 'Inter_600SemiBold',
   },
   copyright: {
     fontSize: 12,

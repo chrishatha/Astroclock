@@ -145,9 +145,9 @@ function Layer1Fixed() {
         );
       })}
 
-      {/* Element names */}
+      {/* Element names — moved inward so they don't overlap degree numbers */}
       {elementFields.map(({ field, name }) => (
-        <TangentialText key={field} angleDeg={(field - 1) * 12 + 6} r={L1_MID - 4} fontSize={17} fill="#8899aa" dy={-2}>
+        <TangentialText key={field} angleDeg={(field - 1) * 12 + 6} r={L1_INNER + 18} fontSize={17} fill="#8899aa" dy={-2}>
           {name}
         </TangentialText>
       ))}
@@ -198,10 +198,34 @@ function Layer2Hours({ rotationDeg }: { rotationDeg: number }) {
   );
 }
 
+// Seasonal solstice/equinox markers fixed on the zodiac ring (rotate with ring)
+// Angles are in the ring's local coordinate system (anticlockwise layout):
+//   SE (Psc/Ari) = 0°,  WS (Sgr/Cap) = 90°,  AE (Vir/Lib) = 180°,  SS (Gem/Cnc) = 270°
+const SEASON_MARKS = [
+  { angle: 0,   label: 'SE' },
+  { angle: 90,  label: 'WS' },
+  { angle: 180, label: 'AE' },
+  { angle: 270, label: 'SS' },
+] as const;
+
+// Draw a triangular arrow pointing radially outward (tip toward L3_OUTER) at a local angle
+function zodiacArrowPath(signAngle: number): string {
+  const tipR   = L3_OUTER - 10;  // near outer edge
+  const baseR  = L3_MID   + 4;   // slightly above midpoint
+  const spread = 9;               // half-angular spread at base in degrees
+  const tip = P(tipR, signAngle);
+  const bl  = P(baseR, signAngle - spread);
+  const br  = P(baseR, signAngle + spread);
+  return `M ${tip.x} ${tip.y} L ${bl.x} ${bl.y} L ${br.x} ${br.y} Z`;
+}
+
 // ─── Layer 3: Zodiac ring ─────────────────────────────────────────────────────
 function Layer3Zodiac({
   rotationDeg, currentIdx, prevIdx,
 }: { rotationDeg: number; currentIdx: number; prevIdx: number }) {
+  const emptyRoomDeg = ((-(currentIdx * 30 + 15)) % 360 + 360) % 360;
+  const radianceDeg  = ((-(prevIdx   * 30 + 15)) % 360 + 360) % 360;
+
   return (
     <G transform={`rotate(${rotationDeg}, ${CX}, ${CY})`}>
       {/* Ring */}
@@ -209,15 +233,28 @@ function Layer3Zodiac({
 
       {/* 12 sector dividers */}
       {Array.from({ length: 12 }, (_, i) => {
-        // Anticlockwise sectors: divider i at -i*30°
         const deg = ((-i * 30) % 360 + 360) % 360;
         const start = P(L3_OUTER, deg);
         return <Line key={i} x1={start.x} y1={start.y} x2={CX} y2={CY} stroke="#1e2e42" strokeWidth={0.8} />;
       })}
 
+      {/* Seasonal markers: SE / SS / AE / WS — fixed on ring */}
+      {SEASON_MARKS.map(({ angle, label }) => {
+        const inner = P(L3_INNER, angle);
+        const outer = P(L3_OUTER, angle);
+        return (
+          <G key={label}>
+            <Line x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}
+              stroke="#33aa44" strokeWidth={2.5} />
+            <TangentialText angleDeg={angle + 5} r={L3_MID + 2} fontSize={12} fill="#33aa44">
+              {label}
+            </TangentialText>
+          </G>
+        );
+      })}
+
       {/* Zodiac signs */}
       {ZODIAC_SIGNS.map((sign, i) => {
-        // Anticlockwise placement: sector i center at -(i*30 + 15)°
         const deg = ((-(i * 30 + 15)) % 360 + 360) % 360;
         const color = elementColor(sign.element);
         const isCurrentSign = i === currentIdx;
@@ -225,28 +262,29 @@ function Layer3Zodiac({
 
         return (
           <G key={i}>
-            {/* Sign name — always use element color */}
             <TangentialText angleDeg={deg} r={L3_MID + 14} fontSize={19} fill={color}>
               {sign.abbr}
             </TangentialText>
-            {/* Dates — always use element color */}
             <TangentialText angleDeg={deg} r={L3_MID - 10} fontSize={13} fill={color} dy={6}>
               {sign.dates}
             </TangentialText>
-            {/* Special labels */}
             {isPrevSign && (
-              <TangentialText angleDeg={deg} r={L3_MID + 32} fontSize={14} fill="#cc3333">
+              <TangentialText angleDeg={deg} r={L3_MID + 32} fontSize={13} fill="#cc3333">
                 radiance
               </TangentialText>
             )}
             {isCurrentSign && (
-              <TangentialText angleDeg={deg} r={L3_MID + 32} fontSize={14} fill="#555566">
+              <TangentialText angleDeg={deg} r={L3_MID + 32} fontSize={13} fill="#555566">
                 empty room
               </TangentialText>
             )}
           </G>
         );
       })}
+
+      {/* Arrows: Empty Room (blue, gold outline) and Radiance (red, gold outline) */}
+      <Path d={zodiacArrowPath(emptyRoomDeg)} fill="#3355cc" stroke="#c9a227" strokeWidth={1.5} />
+      <Path d={zodiacArrowPath(radianceDeg)}  fill="#cc3333" stroke="#c9a227" strokeWidth={1.5} />
     </G>
   );
 }
@@ -374,12 +412,9 @@ function Layer6Cross({
           moon = <HalfMoon cx={cx} cy={cy} r={r} leftFill="#060c14" rightFill="#e8dfc8" />;
         }
 
-        // Day number label — placed between circle and ring inner edge, rotated
-        // so it reads tangentially (text points toward the arm direction).
-        // We counter-rotate the text by -rotationDeg via the parent G so it
-        // stays legible, then rotate again by arm to position.
-        const labelR = CROSS_TIP + r + 18;
-        const labelPos = P(labelR, arm);
+        // Day number label — centered on the moon circle
+        const labelR = CROSS_TIP;
+        const textFill = label === 'full' ? '#1a1820' : '#ddeeff';
 
         return (
           <G key={arm}>
@@ -389,7 +424,7 @@ function Layer6Cross({
                 <SvgText
                   x={CX} y={CY - labelR}
                   textAnchor="middle" dominantBaseline="middle"
-                  fontSize={20} fill="#8899bb" fontWeight="600"
+                  fontSize={17} fill={textFill} fontWeight="700"
                   transform={(arm > 90 && arm < 270)
                     ? `rotate(180, ${CX}, ${CY - labelR})`
                     : undefined}
@@ -419,6 +454,7 @@ interface Props {
   firstQuarterDay: number | null;
   newMoonDay: number | null;
   lastQuarterDay: number | null;
+  isEpagomenal: boolean;
 }
 
 export default function ClockFace({
@@ -434,6 +470,7 @@ export default function ClockFace({
   firstQuarterDay,
   newMoonDay,
   lastQuarterDay,
+  isEpagomenal,
 }: Props) {
   // Sun journey arc: clockwise from 1° (March 21) to sunAngleDeg, inside the degree ring near its inner edge
   const ARC_R = L1_INNER + 14; // inside the L1 degree ring, just above L1_INNER — visible and clear of labels
@@ -508,6 +545,25 @@ export default function ClockFace({
       {/* Center jewel */}
       <Circle cx={CX} cy={CY} r={CENTER_R} fill="#0f1a28" stroke="#c9a227" strokeWidth={2} />
       <Circle cx={CX} cy={CY} r={CENTER_R * 0.5} fill="#c9a227" opacity={0.7} />
+
+      {/* Epagomenal overlay — visible from day 360 until next spring equinox */}
+      {isEpagomenal && (
+        <G>
+          <Circle cx={CX} cy={CY} r={L3_INNER - 2} fill="rgba(6,8,15,0.88)" />
+          <SvgText x={CX} y={CY - 36} textAnchor="middle" dominantBaseline="middle"
+            fontSize={26} fill="#c9a227" fontWeight="700">
+            Epagomenal
+          </SvgText>
+          <SvgText x={CX} y={CY + 2} textAnchor="middle" dominantBaseline="middle"
+            fontSize={19} fill="#c9a227">
+            (Days out of Time)
+          </SvgText>
+          <SvgText x={CX} y={CY + 38} textAnchor="middle" dominantBaseline="middle"
+            fontSize={23} fill="#c9a227" fontWeight="700">
+            Celebration
+          </SvgText>
+        </G>
+      )}
 
       {/* Copyright — left side */}
       <SvgText

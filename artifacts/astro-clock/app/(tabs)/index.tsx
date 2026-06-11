@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ClockFace from '@/components/ClockFace';
 import { useClockContext } from '@/context/ClockContext';
+import { getDaysSinceMar21 } from '@/utils/astronomy';
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
@@ -26,6 +27,8 @@ export default function ClockScreen() {
     zodiacCurrentIndex, zodiacPrevIndex,
     fullMoonDay, firstQuarterDay, newMoonDay, lastQuarterDay,
   } = useClockContext();
+
+  const isEpagomenal = getDaysSinceMar21(now) >= 360;
 
   const { width } = Dimensions.get('window');
   const clockSize = Math.min(width - 16, 520);
@@ -48,6 +51,7 @@ export default function ClockScreen() {
             </View>
           </View>
         </View>
+        <Text style={styles.appTitle}>Astro-Clock-HaTha</Text>
         <TouchableOpacity
           onPress={() => router.push('/(tabs)/settings')}
           style={styles.settingsBtn}
@@ -72,6 +76,7 @@ export default function ClockScreen() {
           firstQuarterDay={firstQuarterDay}
           newMoonDay={newMoonDay}
           lastQuarterDay={lastQuarterDay}
+          isEpagomenal={isEpagomenal}
         />
       </View>
 
@@ -169,6 +174,14 @@ const styles = StyleSheet.create({
     color: '#7a8a9a',
     fontFamily: 'Inter_400Regular',
     letterSpacing: 1,
+  },
+  appTitle: {
+    fontSize: 13,
+    color: '#c9a227',
+    fontFamily: 'Inter_600SemiBold',
+    letterSpacing: 0.8,
+    flex: 1,
+    textAlign: 'center',
   },
   settingsBtn: {
     padding: 8,

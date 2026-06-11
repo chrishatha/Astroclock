@@ -127,9 +127,9 @@ export function getMoonPhaseDays(year: number, month: number): {
 
   return {
     newMoon:      utcDay(newMoonInMonth),
-    firstQuarter: utcDay(fqDate),
-    fullMoon:     utcDay(fmDate),
-    lastQuarter:  utcDay(lqDate),
+    firstQuarter: fqDate.getUTCDate(),
+    fullMoon:     fmDate.getUTCDate(),
+    lastQuarter:  lqDate.getUTCDate(),
   };
 }
 

@@ -185,8 +185,12 @@ export default function SettingsScreen() {
         {/* Info */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>About the Clock</Text>
-          <Text style={styles.info}>
-            {'Layer 1 – Fixed degree ring (30 fields × 12°, south = 0°)\n' +
+            <Text style={styles.info}>
+            {'This clock displays the current monthly zodiac sign (Empty Room Sign) according to the calendar year with the corresponding date, and it shows the true zodiac sign/birth sign (Radiance Sign) that, at that time, due to precession with the sun, is moving across the sky, coincides with the highest point of the sun in the south, and shines into the Empty Room. The Empty Room contains the conditions of the year/monthly zodiac sign (Empty Room Sign) accurate to its date / date of birth and is filled with the actual conditions of the true solar sign / true birth zodiac sign (Radiance Sign).\n\n' +
+             'The date of the zodiac sign in the year cycle is the existing Empty Room that is filled with the Radiance of the true birth zodiac sign.\n\n' +
+             'The sun moves 1 degree each day, while the moon moves 12 degrees each day. The sun\'s movement is represented in the annual cycle, while the moon\'s movement is represented in the monthly cycle. The year always begins with the vernal equinox. Since a 360-degree circle ends before actual time, the remaining ominous days are added at the end as a celebration at the turn of the year (Epagomenal "Days out of Time" Celebration).\n\n' +
+             'To observe the stars, lie flat on your back with your head facing south. Then all cardinal directions will be in the correct position; in relation to your body, east will be in the east and west in the west.\n\n' +
+             'Layer 1 – Fixed degree ring (30 fields × 12°, south = 0°)\n' +
              'Layer 2 – 24-hour wheel (current hour at south)\n' +
              'Layer 3 – Zodiac ring (rotates with Earth, radiance at noon)\n' +
              'Layer 4 – Sun hand (1°/day from spring equinox)\n' +

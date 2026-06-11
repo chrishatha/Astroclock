@@ -1,0 +1,33 @@
+1. Add the following to the text "about the clock":
+
+"This clock displays the current monthly zodiac sign (Empty Room Sign) according to the calendar year with the corresponding date, and it shows the true zodiac sign/birth sign (Radiance Sign) that, at that time, due to precession with the sun, is moving across the sky, coincides with the highest point of the sun in the south, and shines into the Empty Room. The Empty Room contains the conditions of the year/monthly zodiac sign (Empty Room Sign) accurate to its date / date of birth and is filled with the actual conditions of the true solar sign / true birth zodiac sign (Radiance Sign).
+
+The date of the zodiac sign in the year cycle is the existing Empty Room that is filled with the Radiance of the true birth zodiac sign.
+
+The sun moves 1 degree each day, while the moon moves 12 degrees each day. The sun's movement is represented in the annual cycle, while the moon's movement is represented in the monthly cycle. The year always begins with the vernal equinox. Since a 360-degree circle ends before actual time, the remaining ominous days are added at the end as a celebration at the turn of the year (Epagomenal „Days out of Time“ Celebration).
+
+To observe the stars, lie flat on your back with your head facing south. Then all cardinal directions will be in the correct position; in relation to your body, east will be in the east and west in the west.
+
+Layer 1 – Fixed degree ring (30 fields × 12°, south = 0°)
+Layer 2 – 24-hour wheel (current hour at south)
+Layer 3 – Zodiac ring (rotates with Earth, radiance at noon)
+Layer 4 – Sun hand (1°/day from spring equinox)
+Layer 5 – Moon hand (synodic cycle pattern)
+Layer 6 – Lunar phase cross (aligned to month phases)"
+
+2. Epagomenal „Days out of Time“ Celebration:
+-​​When the sun clock hand reaches 360°, the next day is the start and first day, of the Epagomenal Celebration; This celbration reaches including up to the date 20.03.
+-During this days the following text should be displayed at the center of the clock in front: "Epagomenal (Days out of Time) Celebration"
+
+3. When press the contact button: remove the formular to send email, Instead open a little window that show my email address: "chris.hatha@proton.me" and place a "Copy" button to the right of it, that users can copy this email to the user's clipboard. 
+Once copied, change the button text to "Copied! ✔" and change its background color to green for 2 seconds. Add a small note or placeholder below or next to the email that says: "Please use for request the keyword Astro-Clock-Hatha".
+
+4. On the top of screen is shown in yellow the text "Astro-Clock"; Change it to: "Astro-Clock-HaTha"
+
+5. The respective active corresponding Zodiac field representing "Empty Room" and the field representing "Radiance" should have a arrow. The arrow for "Empty Room" in blue color. The arrow for "Radiance" in red color. Both arrows outer lines in gold color. Move the arrows slightly inward to the middle that the arrow point to the inner circumference of the zodiac sign circle, so that the arrows point in direction of that zodiac fields (they point in direction to the outside of the zodiac circle).
+
+6. The spring equinox: SE, summer solstice: SS, autumn equinox: AE, and winter solstice: WS should be marked with a green line in the circle of the zodiac signs; between the zodiac Psc and Ari SE, between Gem and Cnc SS, between Vir and Lib AE,  between Sgr and Cap WS. This four lines are fix to its places between the zodiacs regardless of the date. Write SE, SS, AE, WS beside the line (also in green color).
+
+7. The text eather, fire, wind, earth, water overlay the numbers of the corresponding field. Move this text a little bit more inwards.
+
+8. at the moon cross, only three of the four moons shows the corresponding day of the current moon phase near each of the moons outer side in digital number. one of the half moon didn't show it, make that it show the corresponding correct date too.
